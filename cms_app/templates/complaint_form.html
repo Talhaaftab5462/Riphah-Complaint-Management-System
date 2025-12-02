@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Submit Complaint</h3>
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('main.submit_complaint') }}">
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+        <label for="title">Title</label>
+        {{ form.title(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.category.label(class="form-label") }}
+        {{ form.category(class="form-select") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.priority.label(class="form-label") }}
+        {{ form.priority(class="form-select") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.description.label(class="form-label") }}
+        {{ form.description(class="form-control", rows=4) }}
+    </div>
+
+    {% if complaint is defined and complaint %}
+    <p><strong>Assigned To:</strong>
+        {% if complaint.assigned_user %}
+            {{ complaint.assigned_user.username }}
+        {% else %}
+            Not assigned
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div class="mb-3">
+        {{ form.attachment.label(class="form-label") }}
+        {{ form.attachment(class="form-control") }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

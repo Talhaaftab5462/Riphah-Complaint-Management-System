@@ -1,0 +1,10 @@
+__pycache__/
+instance/
+env/
+.venv/
+*.pyc
+*.db
+.env
+Presentation.md
+SRS.md
+SystemDesign.md

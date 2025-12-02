@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4 text-success fw-bold">Dashboard</h2>
+
+<!-- Dashboard Statistics -->
+<div class="row mb-4 g-3">
+    {% set cards = [
+        ('Total', total_complaints, 'bg-success', 'bi-card-list'),
+        ('Pending', pending_count, 'bg-warning text-dark', 'bi-hourglass-split'),
+        ('In Progress', in_progress_count, 'bg-info text-dark', 'bi-gear-fill'),
+        ('Resolved', resolved_count, 'bg-primary', 'bi-check-circle-fill'),
+        ('Approved', approved_count, 'bg-success', 'bi-hand-thumbs-up-fill'),
+        ('Denied', denied_count, 'bg-danger', 'bi-hand-thumbs-down-fill')
+    ] %}
+    {% for title, count, color, icon in cards %}
+    <div class="col-md-2 col-sm-4">
+        <div class="card {{ color }} h-100 text-center shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi {{ icon }} me-1"></i>{{ title }}</h5>
+                <p class="card-text display-6">{{ count }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Complaints by Category -->
+<h4 class="mb-3">Complaints by Category</h4>
+<div class="row mb-4 g-3">
+    {% for category, count in category_counts %}
+    <div class="col-md-2 col-sm-4">
+        <div class="card bg-secondary h-100 text-center shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">{{ category }}</h6>
+                <p class="card-text display-6">{{ count }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Complaints Table -->
+{% if complaints %}
+<div class="table-responsive shadow-sm rounded">
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>User</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in complaints %}
+        <tr>
+            <td>{{ c.id }}</td>
+            <td>{{ c.category }}</td>
+            <td>{{ c.title }}</td>
+            <td>{{ c.description }}</td>
+            <td>
+                {% if c.status == 'Pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% elif c.status == 'In Progress' %}
+                    <span class="badge bg-info text-dark">In Progress</span>
+                {% elif c.status == 'Resolved' %}
+                    <span class="badge bg-primary">Resolved</span>
+                {% elif c.status == 'Approved' %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif c.status == 'Denied' %}
+                    <span class="badge bg-danger">Denied</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ c.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ c.owner.username }}</td>
+            <td>
+                <a href="{{ url_for('main.view_complaint', complaint_id=c.id) }}" class="btn btn-primary btn-sm mb-1">
+                    <i class="bi bi-eye-fill me-1"></i>View
+                </a>
+                {% if current_user.is_admin and current_user.id == c.assigned_to %}
+                    {% for status_option in ['In Progress','Resolved','Approved','Denied'] %}
+                        {% if c.status != status_option %}
+                            <a href="{{ url_for('main.update_status', complaint_id=c.id, status=status_option) }}" 
+                               class="btn btn-sm mb-1
+                               {% if status_option == 'In Progress' %}btn-info
+                               {% elif status_option == 'Resolved' %}btn-primary
+                               {% elif status_option == 'Approved' %}btn-success
+                               {% elif status_option == 'Denied' %}btn-danger{% endif %}">
+                                {{ status_option }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if current_user.is_admin %}
+                <form action="{{ url_for('main.assign_complaint', complaint_id=c.id) }}" method="POST" class="d-inline">
+                    <select name="staff_id" class="form-select form-select-sm d-inline w-auto">
+                        {% for u in users %}
+                            {% if u.is_admin %}
+                                <option value="{{ u.id }}" {% if c.assigned_to == u.id %}selected{% endif %}>
+                                    {{ u.username }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-secondary btn-sm">Assign</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+<p>No complaints found.</p>
+{% endif %}
+
+<a class="btn btn-success mt-3" href="{{ url_for('main.submit_complaint') }}">
+    <i class="bi bi-plus-circle me-1"></i> Submit Complaint
+</a>
+
+{% endblock %}

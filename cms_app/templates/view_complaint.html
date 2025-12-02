@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3>Complaint Details</h3>
+    </div>
+    <div class="card-body">
+        <p><strong>Title:</strong> {{ complaint.title }}</p>
+        <p><strong>Description:</strong> {{ complaint.description }}</p>
+        <p><strong>Category:</strong> {{ complaint.category }}</p>
+        <p><strong>Priority:</strong> {{ complaint.priority }}</p>
+        <p><strong>Status:</strong> 
+            <span class="badge
+                {% if complaint.status == 'Pending' %}bg-warning text-dark
+                {% elif complaint.status == 'In Progress' %}bg-info text-dark
+                {% elif complaint.status == 'Resolved' %}bg-primary
+                {% elif complaint.status == 'Approved' %}bg-success
+                {% elif complaint.status == 'Denied' %}bg-danger
+                {% else %}bg-secondary{% endif %}">
+                {{ complaint.status }}
+            </span>
+        </p>
+        <p><strong>Submitted by:</strong> {{ complaint.owner.username }}</p>
+        <p><strong>Assigned to:</strong> 
+            {% if complaint.assigned_user %}
+                {{ complaint.assigned_user.username }}
+            {% else %}
+                Not assigned
+            {% endif %}
+        </p>
+        <p><strong>Attachment:</strong>
+            {% if complaint.attachment %}
+                <a href="{{ url_for('static', filename='uploads/' ~ complaint.attachment) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    View / Download
+                </a>
+            {% else %}
+                No attachment
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Comments Section -->
+<div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+        <h4>Comments</h4>
+    </div>
+    <div class="card-body">
+        {% if complaint.comments %}
+            {% for comment in complaint.comments %}
+            <div class="alert alert-light border">
+                <strong>{{ comment.user.username }}:</strong> {{ comment.text }}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No comments yet.</p>
+        {% endif %}
+
+        {% set can_comment = (current_user.id == complaint.assigned_to or current_user.id == complaint.user_id) 
+                              and complaint.status not in ['Resolved', 'Denied'] %}
+        {% if can_comment %}
+        <form method="POST" action="{{ url_for('main.view_complaint', complaint_id=complaint.id) }}">
+            <div class="mb-3">
+                <textarea name="comment" class="form-control" rows="3" placeholder="Add your comment..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Status Update for Assigned Admin -->
+{% if current_user.id == complaint.assigned_to %}
+<div class="mb-4">
+    <h5>Update Status:</h5>
+    <div class="btn-group" role="group">
+        {% for status_option in ['Pending','In Progress','Resolved','Approved','Denied'] %}
+            {% if complaint.status != status_option %}
+                <a href="{{ url_for('main.update_status', complaint_id=complaint.id, status=status_option) }}"
+                   class="btn
+                   {% if status_option == 'Pending' %}btn-warning
+                   {% elif status_option == 'In Progress' %}btn-info
+                   {% elif status_option == 'Resolved' %}btn-primary
+                   {% elif status_option == 'Approved' %}btn-success
+                   {% elif status_option == 'Denied' %}btn-danger{% endif %}">
+                    {{ status_option }}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+
+{% endblock %}
