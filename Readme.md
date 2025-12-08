@@ -321,6 +321,7 @@ For questions, issues, or deployment assistance:
 **Project Repository**: [https://github.com/Talhaaftab5462/Riphah-Complaint-Management-System](https://github.com/Talhaaftab5462/Riphah-Complaint-Management-System)
 
 **Lead Developer**: Talha Aftab
+
 **Other Developers**: Haris Habib, Habibullah Naz, Shehbaz Touqeer
 **Institution**: Riphah International University
 
