@@ -320,7 +320,8 @@ For questions, issues, or deployment assistance:
 
 **Project Repository**: [https://github.com/Talhaaftab5462/Riphah-Complaint-Management-System](https://github.com/Talhaaftab5462/Riphah-Complaint-Management-System)
 
-**Lead Developer**: Talha Aftab  
+**Lead Developer**: Talha Aftab
+**Other Developers**: Haris Habib, Habibullah Naz, Shehbaz Touqeer
 **Institution**: Riphah International University
 
 ---
@@ -330,8 +331,8 @@ For questions, issues, or deployment assistance:
 - **SRS_CMS_Riphah.docx** - Detailed Software Requirements Specification
 - **SystemDesign_CMS_Riphah.docx** - Complete System Design Document
 - **TestCases_CMS_Riphah.docx** - Comprehensive Test Cases (27 tests)
-- **PresentationGuide_CMS_Riphah.docx** - Final Presentation Guide
-- **PROJECT_DOCUMENTATION.md** - This file
+- **CMS_Presentation.pptx** - Final Presentation Guide
+- **Readme.md** - This file
 
 ---
 
