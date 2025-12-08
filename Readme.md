@@ -323,6 +323,7 @@ For questions, issues, or deployment assistance:
 **Lead Developer**: Talha Aftab
 
 **Other Developers**: Haris Habib, Habibullah Naz, Shehbaz Touqeer
+
 **Institution**: Riphah International University
 
 ---
